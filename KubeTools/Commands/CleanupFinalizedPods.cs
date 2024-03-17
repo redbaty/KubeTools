@@ -1,4 +1,4 @@
-using System.Text;
+﻿using System.Text;
 using CliFx;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -55,13 +55,13 @@ public class CleanupFinalizedPods : ICommand
                 if (timeDelta > MinAge)
                 {
                     await _kubectl.DeleteNamespacedPodAsync(pod.Metadata.Name, pod.Metadata.NamespaceProperty);
-                    await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}");
+                    await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}, pod status was {pod.Status.Phase}");
                 }
             }
             else
             {
                 await _kubectl.DeleteNamespacedPodAsync(pod.Metadata.Name, pod.Metadata.NamespaceProperty);
-                await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}");
+                await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}, pod status was {pod.Status.Phase}");
             }
         }
         
