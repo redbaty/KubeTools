@@ -57,6 +57,11 @@ public class CleanupFinalizedPods : ICommand
             }
         }
         
+        if(pods.Items.Count == 0)
+        {
+            await console.Output.WriteLineAsync("No pods to delete");
+        }
+        
         await console.Output.WriteLineAsync("Done");
     }
 }
