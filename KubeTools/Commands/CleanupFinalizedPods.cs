@@ -1,4 +1,4 @@
-﻿using System.Text;
+using System.Text;
 using CliFx;
 using CliFx.Attributes;
 using CliFx.Infrastructure;
@@ -16,6 +16,9 @@ public class CleanupFinalizedPods : ICommand
 
     [CommandOption("cleanup-failed", 'f', Description = "Delete failed pods", EnvironmentVariable = "CLEANUP_FAILED")]
     public bool CleanupFailed { get; set; } = true;
+    
+    [CommandOption("cleanup-evicted", 'e', Description = "Delete evicted pods", EnvironmentVariable = "CLEANUP_EVICTED")]
+    public bool CleanupEvicted { get; set; } = true;
 
     public CleanupFinalizedPods(Kubernetes kubectl)
     {
@@ -29,6 +32,11 @@ public class CleanupFinalizedPods : ICommand
         if (CleanupFailed)
         {
             fieldSelectorStringBuilder.Append(",status.phase=Failed");
+        }
+        
+        if (CleanupEvicted)
+        {
+            fieldSelectorStringBuilder.Append(",status.phase=Evicted");
         }
 
         var pods = await _kubectl.ListPodForAllNamespacesAsync(fieldSelector: fieldSelectorStringBuilder.ToString());
@@ -50,7 +58,7 @@ public class CleanupFinalizedPods : ICommand
                     await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}");
                 }
             }
-            else if (pod.Status.Phase == "Failed")
+            else
             {
                 await _kubectl.DeleteNamespacedPodAsync(pod.Metadata.Name, pod.Metadata.NamespaceProperty);
                 await console.Output.WriteLineAsync($"Deleted pod {pod.Metadata.Name}");
