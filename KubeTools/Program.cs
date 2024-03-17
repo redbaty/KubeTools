@@ -10,7 +10,13 @@ public static class Program
     public static async Task<int> Main()
     {
         var serviceCollection = new ServiceCollection();
-        serviceCollection.AddSingleton(new Kubernetes(KubernetesClientConfiguration.BuildConfigFromConfigFile(@"C:\Users\Marcos\.kube\suse")));
+        serviceCollection.AddSingleton(
+            #if RELEASE
+            new Kubernetes(KubernetesClientConfiguration.InClusterConfig())
+#else
+            new Kubernetes(KubernetesClientConfiguration.BuildDefaultConfig())
+#endif
+        );
         serviceCollection.AddScoped<CleanupFinalizedPods>();
         var serviceProvider = serviceCollection.BuildServiceProvider();
         
