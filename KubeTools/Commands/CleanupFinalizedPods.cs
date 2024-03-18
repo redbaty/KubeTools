@@ -24,19 +24,14 @@ public class CleanupFinalizedPods : ICommand
 
     public async ValueTask ExecuteAsync(IConsole console)
     {
-        var fieldSelectorStringBuilder = new StringBuilder("status.phase=Succeeded");
-
+        var fieldSelector = "status.phase=Succeeded";
+        
         if (CleanupFailed)
         {
-            fieldSelectorStringBuilder.Append(",status.phase=Failed");
+            fieldSelector = "status.phase!=Running,status.phase!=Pending";
         }
         
-        if (CleanupEvicted)
-        {
-            fieldSelectorStringBuilder.Append(",status.phase=Evicted");
-        }
-
-        var pods = await _kubectl.ListPodForAllNamespacesAsync(fieldSelector: fieldSelectorStringBuilder.ToString());
+        var pods = await _kubectl.ListPodForAllNamespacesAsync(fieldSelector: fieldSelector);
         foreach (var pod in pods.Items)
         {
             if (pod.Status.Phase == "Succeeded")
