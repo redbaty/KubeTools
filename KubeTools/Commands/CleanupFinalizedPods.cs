@@ -17,9 +17,6 @@ public class CleanupFinalizedPods : ICommand
     [CommandOption("cleanup-failed", 'f', Description = "Delete failed pods", EnvironmentVariable = "CLEANUP_FAILED")]
     public bool CleanupFailed { get; set; } = true;
     
-    [CommandOption("cleanup-evicted", 'e', Description = "Delete evicted pods", EnvironmentVariable = "CLEANUP_EVICTED")]
-    public bool CleanupEvicted { get; set; } = true;
-
     public CleanupFinalizedPods(Kubernetes kubectl)
     {
         _kubectl = kubectl;
